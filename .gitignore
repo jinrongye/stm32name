@@ -1,0 +1,55 @@
+# ===== Keil MDK 编译产物 =====
+*.o
+*.d
+*.crf
+*.lnp
+*.axf
+*.hex
+*.bin
+*.htm
+*.dep
+*.iex
+*.lst
+*.map
+*.build_log.htm
+*.tra
+*.sct
+
+# Keil 编译输出目录
+Objects/
+Listings/
+
+# Keil 用户配置文件（含个人路径，不应提交）
+*.uvguix.*
+*.uvguix
+*.uvoptx
+*.uvopt
+*.scvd
+
+# 调试配置
+DebugConfig/
+*.dbgconf
+
+# JLink / ST-Link 配置
+JLink*
+*.jlink
+
+# ===== IDE / 编辑器 =====
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ===== 敏感信息 =====
+# vision.js 含有 API Key，不要提交到 GitHub
+vision.js
+.env
+
+# Claude Code 配置
+.claude/
+
+# ===== 下载的第三方仓库 =====
+claude-vision-skill/
