@@ -101,9 +101,8 @@ int main(void)
                 is_night = 1;
             }
 
-            /* 触发 HC-SR04 测量 + 阻塞读取距离（内部含超时处理） */
-            HC_SR04_StartMeasure();
-            distance = HC_SR04_GetDistance();
+            /* 超声波测距（一次调用完成：触发→计时→计算→返回cm） */
+            distance = HC_SR04_Measure();
 
             /* 刷新 OLED 显示 */
             Display_NightMode(distance);
