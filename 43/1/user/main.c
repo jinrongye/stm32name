@@ -39,7 +39,6 @@
 
 #define VOLTAGE_THRESHOLD       1.5f                 /* 光敏电压阈值: < 1.5V = 黑暗 */
 #define DANGER_DISTANCE_CM      30.0f                /* 障碍物警告距离: 30cm */
-#define MEASURE_TIMEOUT_MS      100UL                /* 超声波回波超时等待 */
 #define MAIN_LOOP_DELAY_MS      100UL                /* 主循环刷新间隔 */
 
 /* 全局变量 — 与 ISR 共享 ----------------------------------------------------*/
@@ -63,7 +62,6 @@ int main(void)
     float    voltage;
     float    distance;
     uint8_t  is_night = 0;                           /* 前一时刻的模式标志，用于边沿切换 */
-    uint32_t timeout;
 
     /* ===== 系统初始化 ===== */
     SysTick_Init();                                  /* 1ms 时基，用于延时 */
@@ -103,20 +101,8 @@ int main(void)
                 is_night = 1;
             }
 
-            /* 触发 HC-SR04 测量（发送 20μs TRIG 脉冲） */
+            /* 触发 HC-SR04 测量 + 阻塞读取距离（内部含超时处理） */
             HC_SR04_StartMeasure();
-
-            /* 等待测量完成，带超时退出（防止 ECHO 无回波时死等） */
-            timeout = g_ms_tick;
-            while (!HC_SR04_IsDataReady())
-            {
-                if ((g_ms_tick - timeout) >= MEASURE_TIMEOUT_MS)
-                {
-                    break;  /* 超时: 无回波信号 */
-                }
-            }
-
-            /* 读取测距结果 */
             distance = HC_SR04_GetDistance();
 
             /* 刷新 OLED 显示 */
@@ -278,22 +264,22 @@ static void Display_NightMode(float distance)
         /* 显示距离: XX.X cm（浮点数拆分为整数和小数部分） */
         dist_int  = (uint8_t)distance;
         dist_frac = (uint8_t)(distance * 10.0f + 0.5f) % 10;
-        OLED_Printf(48, 24, 16, "%d.%d cm", (int)dist_int, (int)dist_frac);
+        OLED_Printf(48, 24, 8, "%d.%d cm", (int)dist_int, (int)dist_frac);
     }
 
     /* ---- 第3行: 警告 / 状态 y=48~63 ---- */
     if (distance > 0 && distance < DANGER_DISTANCE_CM)
     {
         /* 障碍物距离过近 */
-        OLED_ShowString(24, 48, "  DANGER!  ", 16);
+        OLED_ShowString(24, 48, "  DANGER!  ", 8);
     }
     else if (distance < 0)
     {
-        OLED_ShowString(16, 48, "Check Sensor", 16);
+        OLED_ShowString(16, 48, "Check Sensor", 8);
     }
     else
     {
-        OLED_ShowString(48, 48, "Safe", 16);
+        OLED_ShowString(48, 48, "Safe", 8);
     }
 
     OLED_Refresh();
@@ -307,11 +293,10 @@ static void Display_DayMode(void)
 {
     OLED_Clear();
 
-    /* ---- 第1行: 模式标题（大字，居中）y=4~19 ---- */
-    OLED_ShowString(32, 4, "DAY MODE", 16);
+    OLED_ShowString(0, 0, "DAY MODE", 8);
 
     /* ---- 第2行: 状态提示 y=36~51 ---- */
-    OLED_ShowString(8, 36, "Ultrasonic OFF", 16);
+    OLED_ShowString(0, 24, " OFF", 8);
 
     OLED_Refresh();
 }
