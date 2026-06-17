@@ -74,8 +74,8 @@ int main(void)
 
     /* 显示启动画面 */
     OLED_Clear();
-    OLED_ShowString(16, 20, "Night Avoid", 12);
-    OLED_ShowString(16, 36, "System Ready", 12);
+    //OLED_ShowString(16, 20, "Night Avoid", 8);
+    //OLED_ShowString(16, 36, "System Ready", 8); 
     OLED_Refresh();
     Delay_ms(1000);
 
@@ -87,7 +87,7 @@ int main(void)
         voltage   = (float)adc_value * 3.3f / 4095.0f;
 
         /* 步骤2: 根据电压判断日间/夜间模式 */
-        if (voltage < VOLTAGE_THRESHOLD)
+        if (voltage >= VOLTAGE_THRESHOLD)
         {
             /* ================================================================
              * 夜间模式 — 检测到黑暗环境
@@ -261,15 +261,17 @@ static void Display_NightMode(float distance)
     OLED_Clear();
 
     /* ---- 第1行: 模式标题（大字，居中）y=0~15 ---- */
-    OLED_ShowString(24, 0, "NIGHT MODE", 16);
+    OLED_ShowString(24, 0, "NIGHT MODE", 8);
+
+
 
     /* ---- 第2行: 距离数值 y=24~39 ---- */
-    OLED_ShowString(0, 24, "Dist:", 16);
+    OLED_ShowString(0, 24, "Dist:", 8);
 
     if (distance < 0)
     {
         /* 未收到回波 — 前方无障碍物或传感器异常 */
-        OLED_ShowString(48, 24, "No Sig", 16);
+        OLED_ShowString(48, 24, "No Sig", 8);
     }
     else
     {
