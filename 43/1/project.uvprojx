@@ -684,6 +684,16 @@
               <FileType>5</FileType>
               <FilePath>.\user\oled.h</FilePath>
             </File>
+            <File>
+              <FileName>hc_sr04.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\user\hc_sr04.c</FilePath>
+            </File>
+            <File>
+              <FileName>hc_sr04.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\user\hc_sr04.h</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
