@@ -38,11 +38,13 @@ static uint8_t OLED_GRAM[OLED_WIDTH][OLED_HEIGHT / 8];
 /* Exported functions --------------------------------------------------------*/
 
 /**
-  * @brief  Software I2C delay (approximate 2us at 72MHz)
+  * @brief  软件 I2C 延时（72MHz 下约 10μs）
+  * @note   部分 SSD1306 模块 I2C 时序较慢，延时需适当加大
+  *         如果 OLED 仍不亮，尝试继续增大 i 的值
   */
 static void I2C_Delay(void)
 {
-    volatile uint32_t i = 10;
+    volatile uint32_t i = 72;   /* 72MHz 下约 10μs，保障兼容性 */
     while (i--) { __NOP(); }
 }
 
@@ -182,20 +184,26 @@ void OLED_Init(void)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
 
-    /* Enable GPIOB clock */
+    /* 使能 GPIOB 时钟 */
     RCC_APB2PeriphClockCmd(OLED_I2C_RCC, ENABLE);
 
-    /* Configure PB6 (SCL), PB7 (SDA) as open-drain output */
+    /* 配置 PB6 (SCL), PB7 (SDA) 为开漏输出，开启内部弱上拉 */
     GPIO_InitStructure.GPIO_Pin  = OLED_I2C_SCL_PIN | OLED_I2C_SDA_PIN;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init(OLED_I2C_PORT, &GPIO_InitStructure);
 
-    /* Release bus */
+    /* 释放总线 */
     OLED_SCL_H();
     OLED_SDA_H();
 
-    /* SSD1306 initialization sequence */
+    /* 上电等待（确保 SSD1306 内部电路稳定） */
+    {
+        volatile uint32_t d = 720000;
+        while (d--) { __NOP(); }   /* 约 10ms */
+    }
+
+    /* SSD1306 初始化序列 */
     OLED_WriteCmd(0xAE); /* Display off */
 
     OLED_WriteCmd(0xD5); /* Set display clock divide ratio / oscillator frequency */

@@ -18,8 +18,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"
 
-/* OLED I2C address (7-bit: 0x3C, shifted left for 8-bit write address) ------*/
-#define OLED_I2C_ADDR       0x78
+/* OLED I2C 地址（7位: 0x3C，左移1位得8位写地址 0x78）------------------*/
+/* 如果 OLED 不亮，尝试另一个常见地址 0x7A                               */
+#define OLED_I2C_ADDR       0x78    /* 大部分模块用 0x78，少数用 0x7A */
 
 /* OLED dimensions ------------------------------------------------------------*/
 #define OLED_WIDTH          128
