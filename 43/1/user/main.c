@@ -260,38 +260,38 @@ static void Display_NightMode(float distance)
 
     OLED_Clear();
 
-    /* ---- 第1行: 模式标题 ---- */
-    OLED_ShowString(0, 0, "-- NIGHT MODE --", 12);
+    /* ---- 第1行: 模式标题（大字，居中）y=0~15 ---- */
+    OLED_ShowString(24, 0, "NIGHT MODE", 16);
 
-    /* ---- 第2行: 距离数值 ---- */
-    OLED_ShowString(0, 20, "Dist:", 12);
+    /* ---- 第2行: 距离数值 y=24~39 ---- */
+    OLED_ShowString(0, 24, "Dist:", 16);
 
     if (distance < 0)
     {
         /* 未收到回波 — 前方无障碍物或传感器异常 */
-        OLED_ShowString(48, 20, "No Signal", 12);
+        OLED_ShowString(48, 24, "No Sig", 16);
     }
     else
     {
-        /* 显示距离: XX.X cm（将浮点数拆分为整数和小数部分） */
+        /* 显示距离: XX.X cm（浮点数拆分为整数和小数部分） */
         dist_int  = (uint8_t)distance;
         dist_frac = (uint8_t)(distance * 10.0f + 0.5f) % 10;
-        OLED_Printf(48, 20, 12, "%u.%u cm", (uint32_t)dist_int, (uint32_t)dist_frac);
+        OLED_Printf(48, 24, 16, "%d.%d cm", (int)dist_int, (int)dist_frac);
     }
 
-    /* ---- 第3行: 警告 / 状态 ---- */
+    /* ---- 第3行: 警告 / 状态 y=48~63 ---- */
     if (distance > 0 && distance < DANGER_DISTANCE_CM)
     {
-        /* 障碍物距离过近！ */
-        OLED_ShowString(0, 44, ">> DANGER! <<", 12);
+        /* 障碍物距离过近 */
+        OLED_ShowString(24, 48, "  DANGER!  ", 16);
     }
     else if (distance < 0)
     {
-        OLED_ShowString(0, 44, "Check Sensor", 12);
+        OLED_ShowString(16, 48, "Check Sensor", 16);
     }
     else
     {
-        OLED_ShowString(0, 44, "Safe", 12);
+        OLED_ShowString(48, 48, "Safe", 16);
     }
 
     OLED_Refresh();
@@ -305,11 +305,11 @@ static void Display_DayMode(void)
 {
     OLED_Clear();
 
-    /* ---- 第1行: 模式标题 ---- */
-    OLED_ShowString(0, 12, "-- DAY MODE --", 12);
+    /* ---- 第1行: 模式标题（大字，居中）y=4~19 ---- */
+    OLED_ShowString(32, 4, "DAY MODE", 16);
 
-    /* ---- 第2行: 状态提示 ---- */
-    OLED_ShowString(0, 36, "Ultrasonic: OFF", 12);
+    /* ---- 第2行: 状态提示 y=36~51 ---- */
+    OLED_ShowString(8, 36, "Ultrasonic OFF", 16);
 
     OLED_Refresh();
 }
